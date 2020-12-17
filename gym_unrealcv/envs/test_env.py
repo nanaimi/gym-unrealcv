@@ -1,5 +1,5 @@
 import gym # openai gym
-from unrealcv_basic import UnrealCv # a lib for using unrealcv client command
+import UnrealCv # a lib for using unrealcv client command
 import numpy as np
 import math
 import run_docker # a lib for run env in a docker container
