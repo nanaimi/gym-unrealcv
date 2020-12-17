@@ -11,7 +11,7 @@ Done :   Collision detected or get a target place
 class UnrealCvSimple(gym.Env):
     # init the Unreal Gym Environment
    def __init__(self,
-                ENV_NAME = 'cpptest' # if use your own environment,please change it 
+                ENV_NAME = 'cpptest' # if use your own environment,please change it
    ):
      self.cam_id = 0
      # run virtual enrionment in docker container
@@ -46,7 +46,7 @@ class UnrealCvSimple(gym.Env):
         # limit max step per episode
         if self.count_steps > self.max_steps:
             done = True
-            print 'Reach Max Steps'
+            print('Reach Max Steps')
 
         return state, reward, done, {}
 
@@ -70,13 +70,13 @@ class UnrealCvSimple(gym.Env):
        if collision:
             done = True
             reward = -1
-            print 'Collision Detected!!'
+            print('Collision Detected!!')
        else:
             distance = self.cauculate_distance(self.target_pos, self.unrealcv.get_pos())
             if distance < 50:
                 reward = 10
                 done = True
-                print ('Get Target Place!')
+                print('Get Target Place!')
        return reward, done
 
    # calcuate the 2D distance between the target and camera
