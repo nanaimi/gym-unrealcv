@@ -11,20 +11,17 @@
 	"collision_th": 50,
 	"waypoint_th": 200,
 	"targets": {
-		"FloorGood": ["floor_good"],
-		"Door": ["SM_Door_37", "SM_Door_39", "SM_Door_41"],
-		"Couch": ["Couch_13", "SM_Couch_1seat_5"],
-		"Plant": ["SM_Plant_7", "SM_Plant_8"],
-		"Sofa": ["SM_sofa_2"]
+		"FloorGood": ["SM_MERGED_FloorGood2"],
+		"Door": ["SM_Door_37", "SM_Door_39", "SM_Door_41"]
 	},
 	"reset_area":[-150, 120, -200, 280, 40, 45],
-	"test_xy": [
-		[-106.195,   437.424],
-		[  27.897,  -162.437],
-		[  10.832,   135.126],
-		[  67.903,    26.995],
-		[ -23.558,  -187.354],
-		[ -80.312,   254.579]
+	"test_xyz": [
+		[-106.195,   437.424, 10],
+		[  27.897,  -162.437, 10],
+		[  10.832,   135.126, 10],
+		[  67.903,    26.995, 10],
+		[ -23.558,  -187.354, 10],
+		[ -80.312,   254.579, 10]
 	],
 	"discrete_actions": [
 		[50,   0, 0],
