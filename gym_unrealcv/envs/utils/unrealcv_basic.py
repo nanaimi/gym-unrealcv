@@ -169,6 +169,7 @@ class UnrealCv(object):
             location = None
             while location is None:
                 location = self.client.request(cmd.format(cam_id=cam_id))
+            print(location) # EasyDebug
             self.cam[cam_id]['location'] = [float(i) for i in location.split()]
             return self.cam[cam_id]['location']
 
