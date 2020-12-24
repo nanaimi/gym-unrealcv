@@ -11,7 +11,7 @@
 	"collision_th": 50,
 	"waypoint_th": 200,
 	"targets": {
-		"FloorGood": ["FloorGood2"],
+		"FloorGood": ["FloorGood"],
 		"Door": ["SM_Door_37", "SM_Door_39", "SM_Door_41"]
 	},
 	"reset_area":[-150, 120, -200, 280, 40, 45],
