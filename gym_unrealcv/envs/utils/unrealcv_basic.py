@@ -37,6 +37,7 @@ class UnrealCv(object):
     def init_unrealcv(self, cam_id, resolution=(320, 240)):
         self.client.connect()
         self.check_connection()
+        # Set some unreal rendering settings
         self.client.request('vrun setres {w}x{h}w'.format(w=resolution[0], h=resolution[1]))
         self.client.request('vrun sg.ShadowQuality 0')
         self.client.request('vrun sg.TextureQuality 0')
@@ -66,34 +67,35 @@ class UnrealCv(object):
         return objects
 
     def read_image(self, cam_id, viewmode, mode='direct'):
-            # cam_id:0 1 2 ...
-            # viewmode:lit,  =normal, depth, object_mask
-            # mode: direct, file
-            if mode == 'direct':
-                cmd = 'vget /camera/{cam_id}/{viewmode} png'
-                res = None
-                while res is None:
-                    res = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode))
-                image_rgb = self.decode_png(res)
-                image_rgb = image_rgb[:, :, :-1]  # delete alpha channel
-                image = image_rgb[:, :, ::-1]  # transpose channel order
+        # cam_id:0 1 2 ...
+        # viewmode:lit,  =normal, depth, object_mask
+        # mode: direct, file
+        if mode == 'direct':
+            cmd = 'vget /camera/{cam_id}/{viewmode} png'
+            res = None
+            while res is None:
+                res = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode))
+            image_rgb = self.decode_png(res)
+            image_rgb = image_rgb[:, :, :-1]  # delete alpha channel
+            image = image_rgb[:, :, ::-1]  # transpose channel order
 
-            elif mode == 'file':
-                cmd = 'vget /camera/{cam_id}/{viewmode} {viewmode}{ip}.png'
-                if self.docker:
-                    img_dirs_docker = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode,ip=self.ip))
-                    img_dirs = self.envdir + img_dirs_docker[7:]
-                else :
-                    img_dirs = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode,ip=self.ip))
-                image = cv2.imread(img_dirs)
-            elif mode == 'fast':
-                cmd = 'vget /camera/{cam_id}/{viewmode} bmp'
-                res = None
-                while res is None:
-                    res = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode))
-                image_rgba = self.decode_bmp(res)
-                image = image_rgba[:, :, :-1]  # delete alpha channel
-            return image
+        elif mode == 'file':
+            cmd = 'vget /camera/{cam_id}/{viewmode} {viewmode}{ip}.png'
+            if self.docker:
+                img_dirs_docker = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode,ip=self.ip))
+                img_dirs = self.envdir + img_dirs_docker[7:]
+            else :
+                img_dirs = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode,ip=self.ip))
+            image = cv2.imread(img_dirs)
+
+        elif mode == 'fast':
+            cmd = 'vget /camera/{cam_id}/{viewmode} bmp'
+            res = None
+            while res is None:
+                res = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode))
+            image_rgba = self.decode_bmp(res)
+            image = image_rgba[:, :, :-1]  # delete alpha channel
+        return image
 
     def read_depth(self, cam_id):
 
@@ -196,7 +198,6 @@ class UnrealCv(object):
         self.client.request(cmd.format(cam_id=cam_id, x=loc[0], y=loc[1], z=loc[2]))
 
     def move_2d(self, cam_id, angle, length, height=0, pitch=0):
-
         yaw_exp = (self.cam[cam_id]['rotation'][1] + angle) % 360
         pitch_exp = (self.cam[cam_id]['rotation'][2] + pitch) % 360
         delt_x = length * math.cos(yaw_exp / 180.0 * math.pi)
@@ -211,6 +212,24 @@ class UnrealCv(object):
 
         location_now = self.get_location(cam_id)
         error = self.get_distance(location_now, location_exp, 2)
+
+        if error < 10:
+            return False
+        else:
+            return True
+
+    # Take step size for x y z and use moveto function to get there
+    # IN: cam_id, delta_x, delta_y, delta_z
+    # OUT:move agent to correct location, returns boolean for collision
+    def move_3d(self, cam_id, delt_x, delt_y, delt_z):
+        pose = get_pose(cam_id, mode='hard' )
+        location_now = self.cam[cam_id]['location']
+        location_exp = [location_now[0] + delt_x, location_now[1]+delt_y, location_now[2]+delt_z]
+
+        self.moveto(cam_id, location_exp)
+
+        location_now = self.get_location(cam_id)
+        error = self.get_distance(location_now, location_exp, n=3)
 
         if error < 10:
             return False

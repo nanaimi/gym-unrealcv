@@ -6,10 +6,10 @@ import gym
 import distutils.version
 
 
-class Navigation(UnrealCv):
+class Landing(UnrealCv):
     def __init__(self, env, cam_id=0, port=9000,
                  ip='127.0.0.1', targets=None, resolution=(160, 120)):
-        super(Navigation, self).__init__(env=env, port=port, ip=ip, cam_id=cam_id, resolution=resolution)
+        super(Landing, self).__init__(env=env, port=port, ip=ip, cam_id=cam_id, resolution=resolution)
 
         if targets == 'all':
             self.targets = self.get_objects()
@@ -20,6 +20,7 @@ class Navigation(UnrealCv):
 
         self.img_color = np.zeros(1)
         self.img_depth = np.zeros(1)
+        self.pose = np.zeros(1)
 
         self.use_gym_10_api = distutils.version.LooseVersion(gym.__version__) >= distutils.version.LooseVersion('0.10.0') # not sure what this is
 
@@ -37,11 +38,18 @@ class Navigation(UnrealCv):
             self.img_gray = self.img_color.mean(2)
             self.img_gray = np.expand_dims(self.img_gray, -1)
             state = np.concatenate((self.img_color, self.img_gray), axis=2)
+        elif observation_type == 'PoseColor':
+            self.img_color = self.read_image(cam_id, 'lit', mode).flatten()
+            self.pose =  np.asarray(self.get_pose(cam_id, mode='hard'), dtype=np.float64)
+            state = np.concatenate((self.pose, self.img_color), axis=0)
+
         return state
 
-    
+
     def define_observation(self, cam_id, observation_type, mode='direct'):
+
         state = self.get_observation(cam_id, observation_type, mode)
+
         if observation_type == 'Color' or observation_type == 'CG':
             if self.use_gym_10_api:
                 observation_space = spaces.Box(low=0, high=255, shape=state.shape, dtype=np.uint8)  # for gym>=0.10
@@ -63,6 +71,16 @@ class Navigation(UnrealCv):
                 observation_space = spaces.Box(low=s_low, high=s_high, dtype=np.float16)  # for gym>=0.10
             else:
                 observation_space = spaces.Box(low=s_low, high=s_high)
+
+        elif observation_type == 'PoseColor':
+            low_bound = np.full(state.shape, 0)
+            low_bound[:6] = -np.inf
+            high_bound = np.full(state.shape, 255)
+            high_bound[:6] = np.inf
+            if self.use_gym_10_api:
+                observation_space = spaces.Box(low=low_bound, high=high_bound, shape=state.shape, dtype=np.float64)  # for gym>=0.10
+            else:
+                observation_space = spaces.Box(low=low_bound, high=high_bound, shape=state.shape)
 
         return observation_space
 

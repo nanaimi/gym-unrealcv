@@ -7,6 +7,10 @@ class Reward():
         self.reward_th = setting['reward_th']
         self.dis2target_last = 0
 
+    # Percentage of mask that is landable
+    def reward_mask(self, object_mask):
+        pass
+
     def reward_bbox(self, boxes):
         reward = 0
 
@@ -41,6 +45,3 @@ class Reward():
         self.dis2target_last = dis2target_now
 
         return reward
-
-    def reward_mask(self, mask):
-        
