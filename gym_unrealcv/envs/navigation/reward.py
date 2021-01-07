@@ -41,6 +41,3 @@ class Reward():
         self.dis2target_last = dis2target_now
 
         return reward
-
-    def reward_mask(self, mask):
-        

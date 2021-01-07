@@ -4,4 +4,4 @@ from gym_unrealcv.envs.unrealcv_tracking_spline import UnrealCvTracking_spline
 from gym_unrealcv.envs.unrealcv_tracking_random import UnrealCvTracking_random
 from gym_unrealcv.envs.unrealcv_tracking_1v1 import UnrealCvTracking_1v1
 from gym_unrealcv.envs.unrealcv_tracking_multicam import UnrealCvMC
-from gym_unrealcv.envs.unrealcv_landing_basic import UnrealCvLanding_base # added
+# from gym_unrealcv.envs.unrealcv_landing_basic import UnrealCvLanding_base # added
