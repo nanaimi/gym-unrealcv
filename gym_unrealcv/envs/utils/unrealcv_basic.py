@@ -222,7 +222,7 @@ class UnrealCv(object):
     # IN: cam_id, delta_x, delta_y, delta_z
     # OUT:move agent to correct location, returns boolean for collision
     def move_3d(self, cam_id, delt_x, delt_y, delt_z):
-        pose = get_pose(cam_id, mode='hard' )
+        pose = self.get_pose(cam_id, mode='hard' )
         location_now = self.cam[cam_id]['location']
         location_exp = [location_now[0] + delt_x, location_now[1]+delt_y, location_now[2]+delt_z]
 
