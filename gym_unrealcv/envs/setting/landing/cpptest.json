@@ -13,7 +13,7 @@
 	"target_object": "FloorGood",
 	"targets": {
 		"FloorGood": ["FloorGood"],
-		"FloorBad": ["FloorBad"],
+		"FloorBad": ["FloorBad"]
 	},
 	"reset_area":[-150, 120, -200, 280, 40, 45],
 	"test_xyz": [
