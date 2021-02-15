@@ -95,10 +95,10 @@ class UnrealCv(object):
                 res = self.client.request(cmd.format(cam_id=cam_id, viewmode=viewmode))
             image_rgba = self.decode_bmp(res)
             image = image_rgba[:, :, :-1]  # delete alpha channel
+
         return image
 
     def read_depth(self, cam_id):
-
         cmd = 'vget /camera/{cam_id}/depth npy'
         res = self.client.request(cmd.format(cam_id=cam_id))
         depth = np.fromstring(res, np.float32)
@@ -117,7 +117,6 @@ class UnrealCv(object):
         img = np.fromstring(res, dtype=np.uint8)
         img=img[-self.resolution[1]*self.resolution[0]*channel:]
         img=img.reshape(self.resolution[1], self.resolution[0], channel)
-
         return img
 
     def convert2planedepth(self, PointDepth, f=320):
@@ -171,7 +170,7 @@ class UnrealCv(object):
             location = None
             while location is None:
                 location = self.client.request(cmd.format(cam_id=cam_id))
-            print(location) # EasyDebug
+            print(">>>>>>>>>> GET LOCATION IS BEING A WANKER",location) # EasyDebug
             self.cam[cam_id]['location'] = [float(i) for i in location.split()]
             return self.cam[cam_id]['location']
 
@@ -212,24 +211,6 @@ class UnrealCv(object):
 
         location_now = self.get_location(cam_id)
         error = self.get_distance(location_now, location_exp, 2)
-
-        if error < 10:
-            return False
-        else:
-            return True
-
-    # Take step size for x y z and use moveto function to get there
-    # IN: cam_id, delta_x, delta_y, delta_z
-    # OUT:move agent to correct location, returns boolean for collision
-    def move_3d(self, cam_id, delt_x, delt_y, delt_z):
-        pose = self.get_pose(cam_id)
-        location_now = self.cam[cam_id]['location']
-        location_exp = [location_now[0] + delt_x, location_now[1]+delt_y, location_now[2]+delt_z]
-
-        self.moveto(cam_id, location_exp)
-
-        location_now = self.get_location(cam_id)
-        error = self.get_distance(location_now, location_exp, n=3)
 
         if error < 10:
             return False
