@@ -1,6 +1,7 @@
 import unrealcv
 import cv2
 import numpy as np
+import glog as log
 import math
 import time
 import os
