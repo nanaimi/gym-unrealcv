@@ -165,12 +165,13 @@ class UnrealCv(object):
     def get_location(self,cam_id, mode='hard'):
         if mode == 'soft':
             return self.cam[cam_id]['location']
+
         if mode == 'hard':
             cmd = 'vget /camera/{cam_id}/location'
             location = None
             while location is None:
                 location = self.client.request(cmd.format(cam_id=cam_id))
-            print(">>>>>>>>>> GET LOCATION IS BEING A WANKER",location) # EasyDebug
+            log.warn("Location of camera {}: {}".format(cam_id,location)) # EasyDebug
             self.cam[cam_id]['location'] = [float(i) for i in location.split()]
             return self.cam[cam_id]['location']
 
