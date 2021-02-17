@@ -39,6 +39,7 @@ class UnrealCv(object):
         self.client.connect()
         self.check_connection()
         # Set some unreal rendering settings
+        log.warn("about to reset resolution")
         self.client.request('vrun setres {w}x{h}w'.format(w=resolution[0], h=resolution[1]))
         self.client.request('vrun sg.ShadowQuality 0')
         self.client.request('vrun sg.TextureQuality 0')
@@ -160,7 +161,7 @@ class UnrealCv(object):
     #         return pose
 
     def set_location(self, cam_id, loc):  # loc=[x,y,z]
-        log.warn("set location for cam_id {} and loc {}".format(cam_id, loc))
+        log.info("set location for cam_id {} and loc {}".format(cam_id, loc))
         cmd = 'vset /camera/{cam_id}/location {x} {y} {z}'
         self.client.request(cmd.format(cam_id=cam_id, x=loc[0], y=loc[1], z=loc[2]))
         self.cam[cam_id]['location'] = loc
@@ -174,7 +175,7 @@ class UnrealCv(object):
             location = None
             while location is None:
                 location = self.client.request(cmd.format(cam_id=cam_id))
-            log.warn("Location of camera {}: {}".format(cam_id,location)) # EasyDebug
+            log.info("Location of camera {}: {}".format(cam_id,location)) # EasyDebug
             self.cam[cam_id]['location'] = [float(i) for i in location.split()]
             return self.cam[cam_id]['location']
 
