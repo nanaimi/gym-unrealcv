@@ -136,34 +136,36 @@ class UnrealCv(object):
         rgbd = np.append(rgb, d, axis=2)
         return rgbd
 
-    def set_pose(self, cam_id, pose):  # pose = [x, y, z, roll, yaw, pitch]
-        cmd = 'vset /camera/{cam_id}/pose {x} {y} {z} {pitch} {yaw} {roll}'
-        self.client.request(cmd.format(cam_id=cam_id, x=pose[0], y=pose[1], z=pose[2], roll=pose[3], yaw=pose[4], pitch=pose[5]))
-        self.cam[cam_id]['location'] = pose[:3]
-        self.cam[cam_id]['rotation'] = pose[-3:]
+    # DOES NOT WORK
+    # def set_pose(self, cam_id, pose):  # pose = [x, y, z, roll, yaw, pitch]
+    #     cmd = 'vset /camera/{cam_id}/pose {x} {y} {z} {pitch} {yaw} {roll}'
+    #     self.client.request(cmd.format(cam_id=cam_id, x=pose[0], y=pose[1], z=pose[2], roll=pose[3], yaw=pose[4], pitch=pose[5]))
+    #     self.cam[cam_id]['location'] = pose[:3]
+    #     self.cam[cam_id]['rotation'] = pose[-3:]
 
-    def get_pose(self, cam_id, mode='hard'):  # pose = [x, y, z, roll, yaw, pitch]
-        if mode == 'soft':
-            pose = self.cam[cam_id]['location']
-            pose.extend(self.cam[cam_id]['rotation'])
-            return pose
+    # def get_pose(self, cam_id, mode='hard'):  # pose = [x, y, z, roll, yaw, pitch]
+    #     if mode == 'soft':
+    #         pose = self.cam[cam_id]['location']
+    #         pose.extend(self.cam[cam_id]['rotation'])
+    #         return pose
+    #
+    #     if mode == 'hard':
+    #         cmd = 'vget /camera/{cam_id}/pose'
+    #         pose = None
+    #         while pose is None:
+    #             pose = self.client.request(cmd.format(cam_id=cam_id))
+    #         pose = [float(i) for i in pose.split()]
+    #         self.cam[cam_id]['location'] = pose[:3]
+    #         self.cam[cam_id]['rotation'] = pose[-3:]
+    #         return pose
 
-        if mode == 'hard':
-            cmd = 'vget /camera/{cam_id}/pose'
-            pose = None
-            while pose is None:
-                pose = self.client.request(cmd.format(cam_id=cam_id))
-            pose = [float(i) for i in pose.split()]
-            self.cam[cam_id]['location'] = pose[:3]
-            self.cam[cam_id]['rotation'] = pose[-3:]
-            return pose
-
-    def set_location(self,cam_id, loc):  # loc=[x,y,z]
+    def set_location(self, cam_id, loc):  # loc=[x,y,z]
+        log.warn("set location for cam_id {} and loc {}".format(cam_id, loc))
         cmd = 'vset /camera/{cam_id}/location {x} {y} {z}'
         self.client.request(cmd.format(cam_id=cam_id, x=loc[0], y=loc[1], z=loc[2]))
         self.cam[cam_id]['location'] = loc
 
-    def get_location(self,cam_id, mode='hard'):
+    def get_location(self, cam_id, mode='hard'):
         if mode == 'soft':
             return self.cam[cam_id]['location']
 
@@ -172,11 +174,11 @@ class UnrealCv(object):
             location = None
             while location is None:
                 location = self.client.request(cmd.format(cam_id=cam_id))
-            log.info("Location of camera {}: {}".format(cam_id,location)) # EasyDebug
+            log.warn("Location of camera {}: {}".format(cam_id,location)) # EasyDebug
             self.cam[cam_id]['location'] = [float(i) for i in location.split()]
             return self.cam[cam_id]['location']
 
-    def set_rotation(self,cam_id, rot):  # rot = [roll, yaw, pitch]
+    def set_rotation(self, cam_id, rot):  # rot = [roll, yaw, pitch]
         cmd = 'vset /camera/{cam_id}/rotation {pitch} {yaw} {roll}'
         self.client.request(cmd.format(cam_id=cam_id, roll=rot[0], yaw=rot[1], pitch=rot[2]))
         self.cam[cam_id]['rotation'] = rot
