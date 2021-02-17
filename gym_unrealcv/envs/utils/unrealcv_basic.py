@@ -40,6 +40,7 @@ class UnrealCv(object):
         self.check_connection()
         # Set some unreal rendering settings
         log.warn("about to reset resolution")
+        time.sleep(1)
         self.client.request('vrun setres {w}x{h}w'.format(w=resolution[0], h=resolution[1]))
         self.client.request('vrun sg.ShadowQuality 0')
         self.client.request('vrun sg.TextureQuality 0')
